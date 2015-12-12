@@ -129,8 +129,7 @@ dt = 1. / 30 # 30fps
 # set up figure and animation
 fig = plt.figure()
 fig.subplots_adjust(left=0, right=1, bottom=0, top=1)
-ax = fig.add_subplot(111, aspect='equal', autoscale_on=False,
-                     xlim=(-3.2, 3.2), ylim=(-2.4, 2.4))
+ax = fig.add_subplot(111, aspect='equal', autoscale_on=False,xlim=(-3.2, 3.2), ylim=(-2.4, 2.4))
 
 # particles holds the locations of the particles
 particles, = ax.plot([], [], 'bo', ms=6)
@@ -142,8 +141,8 @@ rect = plt.Rectangle(box.bounds[::2],
                      ec='none', lw=2, fc='none')
 ax.add_patch(rect)
 
-box.print_all()
 
+box.print_all()
 print('rect :', rect)
 
 def init():

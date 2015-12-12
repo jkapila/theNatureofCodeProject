@@ -20,11 +20,13 @@ class PVector(object):
         self.z = z
         self.ang = ang
         self.counter = 0
+        self.terminal = 0
 
     def add(self, vec):
         self.x = self.x + vec.x
         self.y = self.y + vec.y
         self.z = self.z + vec.z
+        self.limit_check()
 
     def sub(self, vec):
         self.x = self.x - vec.x
@@ -45,16 +47,22 @@ class PVector(object):
     def mag(self):
         return math.sqrt((self.x*self.x) + (self.y*self.y) + (self.z*self.z))
 
-    def normalize(self):
+    def normalize(self,d=1):
         m = self.mag()
         if m != 0:
             self.div(m)
+        self.mult(d)
 
-    def limit(self, d):
-        self.x = d if self.x > d else self.x
-        self.y = d if self.y > d else self.y
-        self.z = d if self.z > d else self.z
-        self.counter += 1
+    def limit(self,d):
+        self.terminal = d
+
+    def limit_check(self):
+        if self.terminal != 0:
+            d= self.terminal
+            self.x = d if self.x > d else self.x
+            self.y = d if self.y > d else self.y
+            self.z = d if self.z > d else self.z
+            self.counter += 1
 
     def get(self):
         return self.x,self.y,self.z,self.ang

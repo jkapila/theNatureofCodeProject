@@ -8,7 +8,7 @@ from vector import PVector
 from mover import Movement
 from genrics import *
 
-class Force(PVector):
+class Force(object):
     """
 
     """
@@ -21,7 +21,7 @@ class Force(PVector):
         :param unitvector:
         :return:
         """
-        super(Force, self).__init__(unitvector.x,unitvector.y,unitvector.z,unitvector.ang)
+        # super(Force, self).__init__(unitvector.x,unitvector.y,unitvector.z,unitvector.ang)
         self.mass = mass
         self.const = const
         self.unitvector = unitvector
@@ -33,10 +33,11 @@ class Force(PVector):
         :param kwargs:
         :return:
         """
-        moving_vector.mult(self.mass)
+        f=moving_vector
+        f.mult(self.mass)
         # f.mult(self.mass)
-        self.add(moving_vector)
-        return addition(moving_vector,self.get())
+        self.unitvector.add(f)
+        return self
 
 
 class Friction(Force):
@@ -61,7 +62,9 @@ class Friction(Force):
         f.mult(-1)
         f.normalize()
         f.mult(self.const)
-        return addition(moving_vector,f)
+        self.unitvector.add(f)
+
+        return self
 
 
 class AirResistance(Force):
@@ -100,6 +103,32 @@ class WaterResistance(Force):
         f.mult(-1)
         f.normalize()
         f.mult(val)
-        return addition(moving_vector,f)
+        self.unitvector.add(f)
+        return self
 
+class Gravity(Force):
 
+    def __init__(self, mass = 10, const = 9.8 ,unitvector = PVector(0,0)):
+        """
+
+        :param mass:
+        :param const:
+        :return:
+        """
+        super(Gravity, self).__init__(mass, const, unitvector)
+
+    def applyForceWith(self, moving_vector, **kwargs):
+        """
+
+        :param force:
+        :param kwargs:
+        :return:
+        """
+        f = moving_vector
+        # f.mult(-1)
+        f.normalize()
+        f.mult(self.const)
+        f.div(self.mass)
+        self.unitvector.add(f)
+
+        return self
