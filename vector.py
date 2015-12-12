@@ -4,7 +4,10 @@
 This is code implementation of lessons from The Nature of Code using Processing
 
 """
-from __future__ import division
+
+from __future__ import (absolute_import, division, print_function, unicode_literals)
+import six
+
 import random
 import math
 
@@ -16,6 +19,7 @@ class PVector(object):
         self.y = y
         self.z = z
         self.ang = ang
+        self.counter = 0
 
     def add(self, vec):
         self.x = self.x + vec.x
@@ -50,6 +54,10 @@ class PVector(object):
         self.x = d if self.x > d else self.x
         self.y = d if self.y > d else self.y
         self.z = d if self.z > d else self.z
+        self.counter += 1
+
+    def get(self):
+        return self.x,self.y,self.z,self.ang
 
     def set_mag(self, d):
         self.normalize()

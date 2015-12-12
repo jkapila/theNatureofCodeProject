@@ -5,53 +5,81 @@
 This in implementation of vector
 
 """
-from __future__ import division
-from random import Random
+
+from __future__ import (absolute_import, division, print_function, unicode_literals)
+import six
+
+import numpy as np
 from vector import PVector
+from environments import *
 
 
-class Mover:
 
-    def __init__(self, impl, width=400, height=200):
+class Movement(object):
 
-        self.width = width
-        self.height = height
-        self.location = PVector()
-        self.velocity = PVector()
-        self.accleration = PVector()
-        self.topspeed = 1
+    def __init__(self, location, velocity, acceleration, checkcondition,width=400, height=200,topspeed = 10,):
 
-        self.initialze(impl)
+        self.w = width
+        self.h = height
+        self.loc = location
+        self.vel = velocity
+        self.acc = acceleration
+        self.checkcondition= checkcondition
+        self.vel.limit(topspeed)
 
-    def initialze(self, impl):
+    def __iter__(self):
+        return self
 
-        if impl == "simple":
-            self.location = PVector(self.width/2, self.height/2)
-            self.velocity = PVector()
-            self.accleration = PVector(-0.001, 0.01)
-            self.topspeed = 10
+    def next(self):
+        if self.vel.counter < 100:
+            self.update()
+            self.check_edges()
+            return self.loc.x,self.loc.y
+        else:
+            raise StopIteration
 
     def update(self):
 
-        self.velocity.add(self.accleration)
-        self.velocity.limit(self.topspeed)
-        self.location.add(self.velocity)
+        self.vel.add(self.acc)
+        self.loc.add(self.vel)
 
-    def draw(self):
-        pass
 
     def check_edges(self):
-        self.location.x = 0 if self.location.x > self.width else self.width
-        self.location.y = 0 if self.location.y > self.width else self.width
+
+        if "one" in self.checkcondition:
+            if self.loc.y >= self.h:
+                self.loc.y = 0
+            elif self.loc.y < -self.h:
+                self.loc.y =  self.h
+
+        if "two" in self.checkcondition:
+            if self.loc.y >= self.h:
+                self.loc.y = 0
+            elif self.loc.y < -self.h:
+                self.loc.y =  self.h
+
+            if self.loc.x >= self.w:
+                self.loc.x = 0
+            elif self.loc.x < 0:
+                self.loc.x =  self.w
 
 
+    def get(self):
+        return self.loc, self.vel, self.acc
 
-def add(vec1, vec2):
+    def get_loc(self):
+        return self.loc.x,self.loc.y
 
-    return PVector(vec1.x+vec2.x, vec1.y+vec2.y, vec1.z+vec2.z)
+    def applyForce(self, force, **kwargs):
 
-def subtract(vec1, vec2):
+        f =  PVector(force.x,force.y,force.z)
+        if 'value' in kwargs:
+            f.div(kwargs['value'])
+        else:
+            f.div(force.mass)
 
-    return PVector(vec1.x-vec2.x, vec1.y-vec2.y, vec1.z-vec2.z)
+        if "evn" in kwargs:
+            if isInside(self.loc,kwargs["env"]):
+                self.applyForce(force)
 
-
+        self.acc.add(f)
