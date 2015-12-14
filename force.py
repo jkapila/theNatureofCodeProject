@@ -8,12 +8,13 @@ from vector import PVector
 from mover import Movement
 from genrics import *
 
+
 class Force(object):
     """
 
     """
 
-    def __init__(self,mass, const, unitvector):
+    def __init__(self, mass, const, unitvector):
         """
 
         :param mass:
